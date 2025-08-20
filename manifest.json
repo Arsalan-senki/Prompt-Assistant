@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Chatbot Pretext Inserter",
   "description": "Prepend repeatable text to chatbot requests.",
-  "version": "1.0",
+  "version": "1.3",
   "permissions": [
     "activeTab",
     "storage"
@@ -16,7 +16,9 @@
     {
       "matches": [
         "https://chatgpt.com/*",
-        "https://chat.openai.com/*"
+        "https://chat.openai.com/*",
+        "https://www.perplexity.ai/*",
+        "https://chat.deepseek.com/*"
       ],
       "js": ["content.js"]
     }
