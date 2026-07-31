@@ -8,23 +8,34 @@
     "storage"
   ],
   "background": {
-    "scripts": ["background.js"],
-    "service_worker": "background.js",
+    "scripts": ["src/background/service-worker.js"],
+    "service_worker": "src/background/service-worker.js",
     "type": "module"
   },
   "content_scripts": [
     {
       "matches": [
         "https://chatgpt.com/*",
-        "https://chat.openai.com/*",
         "https://www.perplexity.ai/*",
-        "https://chat.deepseek.com/*"
+        "https://chat.deepseek.com/*",
+        "https://gapgpt.app/*"
       ],
-      "js": ["content.js"]
+      "js": [
+        "src/content/constants.js",
+        "src/content/platforms/chatgpt.js",
+        "src/content/platforms/perplexity.js",
+        "src/content/platforms/deepseek.js",
+        "src/content/platforms/gapgpt.js",
+        "src/content/platforms/index.js",
+        "src/content/state.js",
+        "src/content/observer.js",
+        "src/content/index.js"
+      ],
+      "run_at": "document_idle"
     }
   ],
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "src/popup/popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",
@@ -35,7 +46,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "{2a2e4ab0-546b-4009-a586-5336abfbb8f6}",
-      "strict_min_version": "57.0"
+      "strict_min_version": "109.0"
     }
   }
 }

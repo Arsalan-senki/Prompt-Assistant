@@ -28,12 +28,12 @@ Coming soon...
    - Open `chrome://extensions/`
    - Enable "Developer mode"
    - Click "Load unpacked"
-   - Select the extension directory
+   - Select the extension directory (the folder that contains `manifest.json`)
 3. For Firefox:
    - Open `about:debugging`
    - Click "This Firefox"
    - Click "Load Temporary Add-on"
-   - Select any file in the extension directory
+   - Select `manifest.json` in the extension directory
 
 ## Usage
 
@@ -47,19 +47,36 @@ Coming soon...
 
 ### Project Structure
 ```
-chatgpt-pretext/
+ChatGPT-Pretext-Inserter/
 ├── manifest.json
-├── background.js
-├── content.js
-├── popup.html
-├── popup.js
-├── styles.css
-└── icons/
-    ├── icon16.png
-    ├── icon32.png
-    ├── icon48.png
-    └── icon128.png
+├── icons/
+├── screenshots/
+├── src/
+│   ├── background/
+│   │   └── service-worker.js      # Extension service worker
+│   ├── content/
+│   │   ├── index.js               # Content script entry
+│   │   ├── constants.js           # Shared keys (classic script)
+│   │   ├── observer.js            # DOM mutation observer
+│   │   ├── state.js               # Pretext state + insert orchestration
+│   │   └── platforms/             # One adapter per chatbot site
+│   │       ├── index.js           # Registry / detection order
+│   │       ├── chatgpt.js
+│   │       ├── perplexity.js
+│   │       └── deepseek.js
+│   ├── popup/
+│   │   ├── popup.html
+│   │   ├── popup.js
+│   │   └── popup.css
+│   └── shared/
+│       └── constants.js           # ES module constants (background)
+├── LICENSE
+└── README.md
 ```
+
+Adding a new chatbot site: create `src/content/platforms/<name>.js` that registers an adapter on `PretextApp.platforms`, add it to `platformList` in `src/content/platforms/index.js`, list the new file in `manifest.json` `content_scripts.js` (before `platforms/index.js`), and add its URL pattern to `manifest.json`.
+
+Content scripts are classic scripts (not ES modules) so they work in Firefox, which does not support `content_scripts.type`.
 
 ### Building from Source
 
@@ -68,9 +85,9 @@ chatgpt-pretext/
 git clone https://github.com/yourusername/chatgpt-pretext.git
 ```
 
-2. Make your changes to the source code
+2. Make your changes under `src/`
 
-3. Load the extension in your browser using the manual installation steps above
+3. Load the extension in your browser using the manual installation steps above (no build step required)
 
 ## Contributing
 
