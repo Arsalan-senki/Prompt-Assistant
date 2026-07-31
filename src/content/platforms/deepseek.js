@@ -17,12 +17,25 @@
       return !textarea.value || textarea.value.trim() === '';
     },
 
+    getText(textarea) {
+      return (textarea.value || '').trim();
+    },
+
     insert(textarea, pretext) {
       textarea.value = pretext + '\n\n';
       textarea.focus();
       textarea.setSelectionRange(textarea.value.length, textarea.value.length);
       textarea.dispatchEvent(new Event('input', { bubbles: true }));
     },
+
+    /** One-shot replace (exact text, no extra spacing). */
+    replaceText(textarea, text) {
+      textarea.value = text;
+      textarea.focus();
+      textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+      textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    },
+
 
     clearAll() {
       const deepseekTextareas = document.querySelectorAll(

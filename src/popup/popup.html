@@ -1,22 +1,199 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ChatGPT Pretext Manager</title>
+  <title>Prompt Assistant</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <div class="popup-container">
     <div class="header">
-      <h2>Pretext</h2>
-      <div class="version" id="versionDisplay">v1.3</div>
-    </div>
-    <div class="content">
-      <textarea id="repeatableTextInput" placeholder="Enter your pretext here...&#10;This text will be automatically inserted before your messages."></textarea>
-      <div class="button-container">
-        <button id="setTextButton" class="primary">Set Pretext</button>
-        <button id="clearTextButton" class="secondary">Clear</button>
+      <h2>Prompt Assistant</h2>
+      <div class="version-row">
+        <span class="version" id="versionDisplay">v1.6</span>
+        <button type="button" id="helpToggle" class="help-button" title="How it works" aria-label="How it works" aria-expanded="false">?</button>
       </div>
     </div>
+
+    <div id="helpPanel" class="help-panel hidden" role="region" aria-label="Tutorial">
+      <h3 class="help-title">How it works</h3>
+      <ul class="help-list">
+        <li><strong>Set Pretext</strong> saves text that auto-inserts into empty chat boxes on supported sites.</li>
+        <li><strong>Clear</strong> removes the saved pretext and stops auto-insert.</li>
+        <li><strong>Enhance Prompt</strong> rewrites the text currently in the <strong>chat box</strong> (not the saved panel pretext) and replaces that chat text once.</li>
+        <li>The panel pretext still auto-inserts on empty chats. Enhance does not change the saved panel pretext.</li>
+        <li><strong>Enhance Settings</strong> - API key, model, style, language, tone, domain, format, and more.</li>
+        <li>Supported sites: ChatGPT, Perplexity, DeepSeek, GapGPT.</li>
+      </ul>
+      <button type="button" id="helpClose" class="secondary help-close">Got it</button>
+    </div>
+
+    <div id="mainPanel" class="panel">
+      <textarea id="repeatableTextInput" placeholder="Enter your pretext here...&#10;This text will be automatically inserted before your messages."></textarea>
+      <div class="button-container">
+        <button type="button" id="setTextButton" class="primary">Set Pretext</button>
+        <button type="button" id="clearTextButton" class="secondary">Clear</button>
+      </div>
+      <div class="button-container">
+        <button type="button" id="enhanceButton" class="accent enhance-btn">
+          <span id="enhanceButtonLabel">Enhance Prompt</span>
+        </button>
+        <button type="button" id="openEnhanceSettings" class="secondary">Enhance Settings</button>
+      </div>
+    </div>
+
+    <div id="enhanceSettingsPanel" class="panel hidden">
+      <div class="settings-header">
+        <h3 class="settings-title">Enhance settings</h3>
+        <button type="button" id="backFromSettings" class="text-button">Back</button>
+      </div>
+
+      <label class="field-label" for="enhanceApiKey" title="Your OpenRouter API key. Stored locally in this browser only.">OpenRouter API key</label>
+      <input id="enhanceApiKey" type="password" autocomplete="off" placeholder="sk-or-..." title="Your OpenRouter API key. Stored locally in this browser only." />
+
+      <label class="field-label" for="enhanceModel" title="OpenRouter model id used for rewriting, e.g. qwen/qwen3-235b-a22b.">Model</label>
+      <input id="enhanceModel" type="text" value="qwen/qwen3-235b-a22b" title="OpenRouter model id used for rewriting, e.g. qwen/qwen3-235b-a22b." />
+
+      <label class="field-label" for="enhanceStyle" title="Preset rewrite style. Choose Custom to rely on your custom instruction.">Enhancement style</label>
+      <select id="enhanceStyle" title="Preset rewrite style. Choose Custom to rely on your custom instruction.">
+        <option value="direct">More direct</option>
+        <option value="shorter">Shorter</option>
+        <option value="clearer">Clearer</option>
+        <option value="detailed">More detailed</option>
+        <option value="custom">Custom instruction</option>
+      </select>
+
+      <label class="field-label" for="enhanceCustomInstruction" title="Extra rewrite rules always applied. If style is Custom, this becomes the main instruction.">Custom instruction</label>
+      <textarea id="enhanceCustomInstruction" rows="4" placeholder="Your custom rewrite rules / guidance (always applied). If style is Custom, this becomes the main instruction." title="Extra rewrite rules always applied. If style is Custom, this becomes the main instruction."></textarea>
+
+      <div class="settings-grid">
+        <div title="Language of the enhanced prompt.">
+          <label class="field-label" for="enhanceLanguage">Language</label>
+          <select id="enhanceLanguage" title="Language of the enhanced prompt.">
+            <option value="auto">Same as input</option>
+            <option value="en">English</option>
+            <option value="fa">Persian</option>
+          </select>
+        </div>
+        <div title="Writing tone for the rewritten prompt.">
+          <label class="field-label" for="enhanceTone">Tone</label>
+          <select id="enhanceTone" title="Writing tone for the rewritten prompt.">
+            <option value="neutral">Neutral</option>
+            <option value="formal">Formal</option>
+            <option value="casual">Casual</option>
+            <option value="technical">Technical</option>
+            <option value="persuasive">Persuasive</option>
+          </select>
+        </div>
+        <div title="Who the improved prompt should target.">
+          <label class="field-label" for="enhanceAudience">Audience</label>
+          <select id="enhanceAudience" title="Who the improved prompt should target.">
+            <option value="general">General</option>
+            <option value="beginner">Beginner</option>
+            <option value="expert">Expert</option>
+            <option value="developer">Developer</option>
+          </select>
+        </div>
+        <div title="Task domain so the rewrite is optimized for that kind of work.">
+          <label class="field-label" for="enhanceDomain">Domain</label>
+          <select id="enhanceDomain" title="Task domain so the rewrite is optimized for that kind of work.">
+            <option value="general">General</option>
+            <option value="coding">Coding</option>
+            <option value="writing">Writing</option>
+            <option value="research">Research</option>
+            <option value="business">Business</option>
+          </select>
+        </div>
+        <div title="Optional role framing inside the improved prompt.">
+          <label class="field-label" for="enhanceRole">Role framing</label>
+          <select id="enhanceRole" title="Optional role framing inside the improved prompt.">
+            <option value="none">None</option>
+            <option value="expert">Expert assistant</option>
+            <option value="teacher">Teacher</option>
+            <option value="coder">Senior engineer</option>
+            <option value="researcher">Researcher</option>
+          </select>
+        </div>
+        <div title="How the enhanced prompt should be structured on the page.">
+          <label class="field-label" for="enhanceOutputFormat">Output format</label>
+          <select id="enhanceOutputFormat" title="How the enhanced prompt should be structured on the page.">
+            <option value="plain">Plain text</option>
+            <option value="bullets">Bullets</option>
+            <option value="numbered">Numbered</option>
+            <option value="sections">Sections</option>
+          </select>
+        </div>
+        <div title="Preferred length of the rewritten prompt vs the original.">
+          <label class="field-label" for="enhanceLength">Length</label>
+          <select id="enhanceLength" title="Preferred length of the rewritten prompt vs the original.">
+            <option value="same">Similar</option>
+            <option value="shorter">Shorter</option>
+            <option value="longer">Longer</option>
+          </select>
+        </div>
+        <div title="Where Enhance reads text from. Chat box only is recommended.">
+          <label class="field-label" for="enhanceSource">Text source</label>
+          <select id="enhanceSource" title="Where Enhance reads text from. Chat box only is recommended.">
+            <option value="composer" selected>Chat box only</option>
+            <option value="panel">Panel pretext only</option>
+          </select>
+        </div>
+        <div title="Model creativity. Lower is more focused; higher is more varied.">
+          <label class="field-label" for="enhanceTemperature">Creativity</label>
+          <select id="enhanceTemperature" title="Model creativity. Lower is more focused; higher is more varied.">
+            <option value="0.1">Low (0.1)</option>
+            <option value="0.3">Balanced (0.3)</option>
+            <option value="0.6">Higher (0.6)</option>
+            <option value="0.9">High (0.9)</option>
+          </select>
+        </div>
+        <div title="Nucleus sampling limit. Lower = more focused token choices.">
+          <label class="field-label" for="enhanceTopP">Top P</label>
+          <select id="enhanceTopP" title="Nucleus sampling limit. Lower = more focused token choices.">
+            <option value="1">1.0</option>
+            <option value="0.95">0.95</option>
+            <option value="0.9">0.9</option>
+            <option value="0.8">0.8</option>
+          </select>
+        </div>
+      </div>
+
+      <label class="field-label" for="enhanceMaxTokens" title="Maximum tokens the model may generate for the rewrite.">Max output tokens</label>
+      <input id="enhanceMaxTokens" type="number" min="256" max="4096" step="128" value="1024" title="Maximum tokens the model may generate for the rewrite." />
+
+      <label class="checkbox-row" title="Ask the model to add goal, constraints, and output format when helpful.">
+        <input id="enhanceAddStructure" type="checkbox" checked />
+        <span>Add structure (goal / constraints / format)</span>
+      </label>
+      <label class="checkbox-row" title="Make important limits and requirements explicit in the rewrite.">
+        <input id="enhanceIncludeConstraints" type="checkbox" checked />
+        <span>Make constraints explicit</span>
+      </label>
+      <label class="checkbox-row" title="Do not change the original meaning of the prompt.">
+        <input id="enhanceKeepIntent" type="checkbox" checked />
+        <span>Keep original intent</span>
+      </label>
+      <label class="checkbox-row" title="Remove vague filler and unnecessary wording.">
+        <input id="enhanceNoFluff" type="checkbox" checked />
+        <span>Remove fluff / filler</span>
+      </label>
+      <label class="checkbox-row" title="Ask the improved prompt to request examples when useful.">
+        <input id="enhanceAskExamples" type="checkbox" />
+        <span>Ask for examples when useful</span>
+      </label>
+      <label class="checkbox-row" title="Ask the improved prompt to request a step-by-step approach when useful.">
+        <input id="enhanceStepByStep" type="checkbox" />
+        <span>Ask for step-by-step when useful</span>
+      </label>
+      <label class="checkbox-row" title="Remove surrounding markdown code fences from the model output.">
+        <input id="enhanceStripMarkdown" type="checkbox" checked />
+        <span>Strip markdown code fences from result</span>
+      </label>
+
+      <div class="button-container">
+        <button type="button" id="saveEnhanceSettings" class="primary">Save settings</button>
+      </div>
+    </div>
+
     <div id="statusMessage" class="status-message"></div>
   </div>
   <script src="popup.js"></script>

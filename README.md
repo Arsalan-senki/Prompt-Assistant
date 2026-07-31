@@ -1,119 +1,137 @@
-# ChatGPT Pretext Inserter
+# Prompt Assistant
 
-A browser extension that automatically prepends customizable text to your ChatGPT messages. Perfect for maintaining consistent system prompts or context across conversations.
+Browser extension that saves a reusable pretext for chat sites and can rewrite the current chat prompt once with AI (OpenRouter).
 
-![Extension Preview](screenshots/preview.png)
+Works on **ChatGPT**, **Perplexity**, **DeepSeek**, and **GapGPT**. Compatible with Chrome and Firefox (Manifest V3).
 
 ## Features
 
-- 🔄 Automatically inserts your predefined text before each ChatGPT message
-- ✏️ Easy to edit and update your pretext
-- 🎯 Works with chat.openai.com
-- 🌐 Compatible with both Chrome and Firefox
-- 🎨 Dark mode interface
-- ⚡ Lightweight and fast
+- **Saved pretext** - auto-inserts into empty chat composers
+- **Enhance Prompt** - rewrites the text in the chat box once (does not change the saved pretext)
+- **Streaming enhance** - writes the improved prompt into the chat as tokens arrive
+- **Enhance settings** - model, style, language, tone, domain, creativity, and more
+- **Multi-site adapters** - one platform file per chatbot site
+- No build step - load unpacked from the repo root
 
-## Installation
+## Install (manual)
 
-### Chrome Web Store
-Coming soon...
-
-### Firefox Add-ons
-Coming soon...
-
-### Manual Installation
-
-1. Clone this repository or download the ZIP file
-2. For Chrome:
+1. Clone or download this repository
+2. Chrome:
    - Open `chrome://extensions/`
-   - Enable "Developer mode"
-   - Click "Load unpacked"
-   - Select the extension directory (the folder that contains `manifest.json`)
-3. For Firefox:
-   - Open `about:debugging`
-   - Click "This Firefox"
-   - Click "Load Temporary Add-on"
-   - Select `manifest.json` in the extension directory
+   - Enable Developer mode
+   - Load unpacked
+   - Select the folder that contains `manifest.json`
+3. Firefox:
+   - Open `about:debugging` -> This Firefox
+   - Load Temporary Add-on
+   - Select `manifest.json`
+
+After reloading the extension, refresh any open chat tabs.
 
 ## Usage
 
-1. Click the extension icon in your browser toolbar
-2. Enter the text you want to automatically insert before your messages
-3. Click "Set Pretext" to save
-4. Start chatting with ChatGPT - your pretext will be automatically inserted before each message
-5. Use "Clear" to remove the pretext when you don't need it
+### Pretext
 
-## Development
+1. Open the extension popup
+2. Enter your pretext (default: `give me direct answers`)
+3. Click **Set Pretext**
+4. Empty chat boxes on supported sites get that text automatically
+5. Click **Clear** to disable auto-insert
 
-### Project Structure
+### Enhance
+
+1. Add an OpenRouter API key under **Enhance Settings** (see below)
+2. Type or paste your prompt in the **chat box** (not only in the panel)
+3. Click **Enhance Prompt**
+4. The chat box is rewritten once; the saved panel pretext stays unchanged
+
+Hover labels in Enhance Settings for short descriptions of each option.
+
+### Set the OpenRouter API key
+
+Enhance uses [OpenRouter](https://openrouter.ai/). You need your own API key.
+
+1. Create an account at [https://openrouter.ai/](https://openrouter.ai/)
+2. Open [https://openrouter.ai/keys](https://openrouter.ai/keys)
+3. Create a key and copy it (starts with `sk-or-...`)
+4. Open the **Prompt Assistant** extension popup
+5. Click **Enhance Settings**
+6. Paste the key into **OpenRouter API key**
+7. Click **Save settings** (the settings panel closes)
+
+The key is stored only in your browser (`chrome.storage.local`). It is not uploaded anywhere except to OpenRouter when you click **Enhance Prompt**.
+
+Optional: confirm the key/model work with:
+
+```bash
+python test/check_openrouter.py
 ```
-ChatGPT-Pretext-Inserter/
+
+(Edit the key inside that script first if you use it.)
+
+## Project structure
+
+```
 ├── manifest.json
 ├── icons/
 ├── screenshots/
+├── test/
+│   └── check_openrouter.py      # Optional OpenRouter connectivity check
 ├── src/
 │   ├── background/
-│   │   └── service-worker.js      # Extension service worker
+│   │   ├── service-worker.js    # Background + enhance streaming
+│   │   └── enhance.js           # OpenRouter enhance API
 │   ├── content/
-│   │   ├── index.js               # Content script entry
-│   │   ├── constants.js           # Shared keys (classic script)
-│   │   ├── observer.js            # DOM mutation observer
-│   │   ├── state.js               # Pretext state + insert orchestration
-│   │   └── platforms/             # One adapter per chatbot site
-│   │       ├── index.js           # Registry / detection order
-│   │       ├── chatgpt.js
-│   │       ├── perplexity.js
-│   │       └── deepseek.js
+│   │   ├── index.js
+│   │   ├── constants.js
+│   │   ├── observer.js
+│   │   ├── state.js
+│   │   └── platforms/           # chatgpt, perplexity, deepseek, gapgpt
 │   ├── popup/
 │   │   ├── popup.html
 │   │   ├── popup.js
 │   │   └── popup.css
 │   └── shared/
-│       └── constants.js           # ES module constants (background)
+│       └── constants.js
 ├── LICENSE
 └── README.md
 ```
 
-Adding a new chatbot site: create `src/content/platforms/<name>.js` that registers an adapter on `PretextApp.platforms`, add it to `platformList` in `src/content/platforms/index.js`, list the new file in `manifest.json` `content_scripts.js` (before `platforms/index.js`), and add its URL pattern to `manifest.json`.
+### Add a new site
 
-Content scripts are classic scripts (not ES modules) so they work in Firefox, which does not support `content_scripts.type`.
+1. Create `src/content/platforms/<name>.js` and register it on `PretextApp.platforms`
+2. Add it to `platformList` in `src/content/platforms/index.js`
+3. List the file in `manifest.json` `content_scripts.js` (before `platforms/index.js`)
+4. Add the site URL pattern to `manifest.json`
 
-### Building from Source
+Content scripts are classic scripts (not ES modules) for Firefox compatibility.
 
-1. Clone the repository:
+## Development
+
 ```bash
-git clone https://github.com/yourusername/chatgpt-pretext.git
+git clone <your-repo-url>
 ```
 
-2. Make your changes under `src/`
+Edit files under `src/`, then reload the extension in the browser. No bundler required.
 
-3. Load the extension in your browser using the manual installation steps above (no build step required)
+Optional API check:
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+```bash
+python test/check_openrouter.py
+```
 
 ## Privacy
 
-This extension:
-- Does not collect any user data
-- Does not send data to any servers
-- Only stores your pretext locally in your browser
-- Only requires minimal permissions to function
+- Pretext and enhance settings are stored locally in the browser
+- Enhance sends the chat prompt to OpenRouter only when you click Enhance (requires your API key)
+- No analytics or other third-party tracking from this extension
 
-## Support
+## Contributing
 
-If you encounter any issues or have suggestions, please:
-1. Check existing issues in the GitHub repository
-2. Create a new issue if your problem isn't already reported
+1. Fork the repo
+2. Create a branch
+3. Open a pull request
 
-## Acknowledgments
+## License
 
-- Built for the ChatGPT community
-- Icon designed with Gemini
+See [LICENSE](LICENSE).

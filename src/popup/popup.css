@@ -1,6 +1,8 @@
 :root {
     --primary-color: #ff6b00;
     --primary-hover: #ff8533;
+    --accent-color: #3d8bfd;
+    --accent-hover: #5c9dff;
     --success-color: #00c853;
     --error-color: #ff3d3d;
     --bg-color: #181818;
@@ -12,40 +14,33 @@
     --secondary-hover: #333333;
 }
 
-/* Popup container styles */
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
     background-color: var(--bg-color);
     color: var(--text-color);
-    min-width: 320px;
-    max-width: 380px;
-}
-
-h3 {
-    margin-top: 0;
-    color: var(--text-color);
+    width: 400px;
+    max-height: 600px;
+    overflow-y: auto;
 }
 
 .popup-container {
-    box-sizing: border-box;
     width: 100%;
     padding: 16px;
-    margin: 0;
     background-color: var(--bg-color);
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
 }
 
-/* Header styles */
 .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
     border-bottom: 2px solid var(--border-color);
 }
 
@@ -56,25 +51,128 @@ h3 {
     color: var(--primary-color);
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.version-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.help-button {
+    flex: 0 0 auto !important;
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 14px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    border: 1px solid var(--border-color) !important;
+    background: transparent !important;
+    color: var(--text-secondary) !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    cursor: pointer;
+}
+
+.help-button:hover,
+.help-button[aria-expanded="true"] {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.help-panel {
+    margin: 0 0 12px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--input-bg);
+}
+
+.help-title {
+    margin: 0 0 8px;
+    font-size: 14px;
+    color: var(--primary-color);
+}
+
+.help-list {
+    margin: 0 0 12px;
+    padding-left: 18px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.help-list li {
+    margin-bottom: 6px;
+}
+
+.help-list strong {
+    color: var(--text-color);
+}
+
+.help-close {
+    width: 100%;
+}
+
 .version {
     font-size: 12px;
     color: var(--text-secondary);
 }
 
-.content {
-    margin-bottom: 12px;
-    padding: 0;
-    box-sizing: border-box;
+.panel {
+    margin-bottom: 8px;
 }
 
-/* Text input styles */
-#repeatableTextInput {
-    box-sizing: border-box;
+.hidden {
+    display: none !important;
+}
+
+.hint {
+    margin: 0 0 10px;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--text-secondary);
+}
+
+.hint code {
+    font-size: 11px;
+    color: var(--primary-color);
+}
+
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.settings-title {
+    margin: 0;
+    font-size: 15px;
+    color: var(--primary-color);
+}
+
+.field-label {
+    display: block;
+    margin: 10px 0 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+#repeatableTextInput,
+#enhanceCustomInstruction,
+#enhanceApiKey,
+#enhanceModel,
+#enhanceStyle {
     width: 100%;
-    min-height: 100px;
-    max-height: 200px;
     padding: 10px;
-    margin-bottom: 12px;
+    margin-bottom: 4px;
     background-color: var(--input-bg);
     color: var(--text-color);
     border: 1px solid var(--border-color);
@@ -82,46 +180,111 @@ h3 {
     font-family: inherit;
     font-size: 13px;
     line-height: 1.5;
-    resize: vertical;
-    transition: border-color 0.2s ease;
 }
 
-#repeatableTextInput:focus {
+#repeatableTextInput {
+    min-height: 100px;
+    max-height: 180px;
+    margin-bottom: 12px;
+    resize: vertical;
+}
+
+#enhanceCustomInstruction {
+    min-height: 96px;
+    resize: vertical;
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 10px;
+    margin-top: 4px;
+}
+
+.settings-grid select {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+#enhanceMaxTokens {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 8px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.checkbox-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 8px 0;
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.checkbox-row input {
+    margin-top: 2px;
+    flex: 0 0 auto;
+}
+
+
+#repeatableTextInput:focus,
+#enhanceCustomInstruction:focus,
+#enhanceApiKey:focus,
+#enhanceModel:focus,
+#enhanceStyle:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.15);
 }
 
-#repeatableTextInput::placeholder {
+#repeatableTextInput::placeholder,
+#enhanceCustomInstruction::placeholder,
+#enhanceApiKey::placeholder {
     color: var(--text-secondary);
 }
 
-/* Button container styles */
 .button-container {
     display: flex;
     gap: 8px;
     margin-bottom: 10px;
 }
 
-/* Button styles */
 button {
     flex: 1;
-    padding: 10px 16px;
+    padding: 10px 14px;
     border: none;
     border-radius: 6px;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
 }
 
 button.primary {
     background-color: var(--primary-color);
-    color: white;
-    font-weight: 500;
+    color: #fff;
 }
 
-button.primary:hover {
+button.primary:hover:not(:disabled) {
     background-color: var(--primary-hover);
 }
 
@@ -131,19 +294,89 @@ button.secondary {
     border: 1px solid var(--border-color);
 }
 
-button.secondary:hover {
+button.secondary:hover:not(:disabled) {
     background-color: var(--secondary-hover);
 }
 
+button.accent {
+    background-color: var(--accent-color);
+    color: #fff;
+}
+
+button.accent.enhance-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+button.accent.enhance-btn #enhanceButtonLabel {
+    position: relative;
+    z-index: 1;
+}
+
+button.accent.is-busy {
+    background-color: #2f6fd0;
+    cursor: wait;
+}
+
+/* Small indeterminate bar inside the Enhance button */
+button.accent.is-busy::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+}
+
+button.accent.is-busy::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 35%;
+    z-index: 2;
+    border-radius: 0 2px 2px 0;
+    background: #fff;
+    animation: btn-progress-slide 1s ease-in-out infinite;
+}
+
+@keyframes btn-progress-slide {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(320%);
+    }
+}
+
+button.text-button {
+    flex: 0 0 auto;
+    width: auto;
+    padding: 4px 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+button.text-button:hover {
+    color: var(--text-color);
+    background: var(--secondary-bg);
+}
+
 .status-message {
-    margin-top: 12px;
+    margin-top: 8px;
     padding: 8px 12px;
     border-radius: 6px;
-    font-size: 13px;
+    font-size: 12px;
     text-align: center;
     opacity: 0;
     transition: opacity 0.3s ease;
     font-weight: 500;
+    min-height: 0;
 }
 
 .status-message.show {
@@ -164,3 +397,4 @@ button.secondary:hover {
     color: var(--error-color);
     border: 1px solid var(--error-color);
 }
+

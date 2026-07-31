@@ -16,10 +16,24 @@
 
   root.loadStateFromStorage = function loadStateFromStorage(callback) {
     chrome.storage.sync.get([root.STORAGE_KEYS.pretext, root.STORAGE_KEYS.enabled], (data) => {
+      const hasPretext =
+        typeof data[root.STORAGE_KEYS.pretext] === 'string' &&
+        data[root.STORAGE_KEYS.pretext].trim() !== '';
+
       state = {
-        pretext: data[root.STORAGE_KEYS.pretext] || '',
-        enabled: Boolean(data[root.STORAGE_KEYS.enabled]),
+        pretext: hasPretext ? data[root.STORAGE_KEYS.pretext] : root.DEFAULT_PRETEXT,
+        enabled: hasPretext
+          ? Boolean(data[root.STORAGE_KEYS.enabled])
+          : root.DEFAULT_ENABLED,
       };
+
+      if (!hasPretext) {
+        chrome.storage.sync.set({
+          [root.STORAGE_KEYS.pretext]: root.DEFAULT_PRETEXT,
+          [root.STORAGE_KEYS.enabled]: root.DEFAULT_ENABLED,
+        });
+      }
+
       if (callback) callback(state);
     });
   };

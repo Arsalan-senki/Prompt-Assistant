@@ -10,11 +10,13 @@
     let debounceTimer = null;
 
     const scheduleCheck = () => {
+      if (root.autoInsertPaused) return;
       if (debounceTimer !== null) {
         clearTimeout(debounceTimer);
       }
       debounceTimer = setTimeout(() => {
         debounceTimer = null;
+        if (root.autoInsertPaused) return;
         const result = root.findPromptTextarea();
         const state = root.getState();
         if (!result || !state.enabled || !state.pretext) return;

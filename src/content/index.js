@@ -32,12 +32,27 @@
 
   root.startObserver();
 
-  chrome.runtime.onMessage.addListener((message) => {
+  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (message.type === MESSAGE_TYPES.updatePretext) {
       applyPretextUpdate({
         pretext: message.pretext,
         enabled: message.enabled,
       });
+      return;
+    }
+
+    if (message.type === MESSAGE_TYPES.getComposerText) {
+      sendResponse({ ok: true, text: root.getComposerText() });
+      return true;
+    }
+
+    if (message.type === MESSAGE_TYPES.replaceComposerOnce) {
+      const ok = root.replaceComposerOnce(message.text || '');
+      sendResponse({
+        ok,
+        error: ok ? undefined : 'No chat composer found on this page.',
+      });
+      return true;
     }
   });
 

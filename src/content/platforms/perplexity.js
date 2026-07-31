@@ -23,6 +23,10 @@
       );
     },
 
+    getText(textarea) {
+      return (textarea.textContent || '').replace(/\u200B/g, '').trim();
+    },
+
     insert(textarea, pretext) {
       const innerP = textarea.querySelector('p');
       if (!innerP) return;
@@ -40,6 +44,10 @@
       }
 
       textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    },
+
+    replaceText(textarea, text) {
+      this.insert(textarea, text);
     },
 
     clearAll() {
