@@ -2,7 +2,7 @@
 
 Browser extension that saves a reusable pretext for chat sites and can rewrite the current chat prompt once with AI (OpenRouter).
 
-Works on **ChatGPT**, **Perplexity**, **DeepSeek**, and **GapGPT**. Compatible with Chrome and Firefox (Manifest V3).
+Works on **ChatGPT**, **Perplexity**, **DeepSeek**, **GapGPT**, and **Gemini**. Compatible with Chrome and Firefox (Manifest V3).
 
 ## Features
 
@@ -86,7 +86,7 @@ python test/check_openrouter.py
 │   │   ├── constants.js
 │   │   ├── observer.js
 │   │   ├── state.js
-│   │   └── platforms/           # chatgpt, perplexity, deepseek, gapgpt
+│   │   └── platforms/           # chatgpt, perplexity, deepseek, gapgpt, gemini
 │   ├── popup/
 │   │   ├── popup.html
 │   │   ├── popup.js

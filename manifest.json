@@ -13,7 +13,8 @@
     "https://chatgpt.com/*",
     "https://www.perplexity.ai/*",
     "https://chat.deepseek.com/*",
-    "https://gapgpt.app/*"
+    "https://gapgpt.app/*",
+    "https://gemini.google.com/*"
   ],
   "background": {
     "scripts": ["src/background/service-worker.js"],
@@ -26,7 +27,8 @@
         "https://chatgpt.com/*",
         "https://www.perplexity.ai/*",
         "https://chat.deepseek.com/*",
-        "https://gapgpt.app/*"
+        "https://gapgpt.app/*",
+        "https://gemini.google.com/*"
       ],
       "js": [
         "src/content/constants.js",
@@ -34,6 +36,7 @@
         "src/content/platforms/perplexity.js",
         "src/content/platforms/deepseek.js",
         "src/content/platforms/gapgpt.js",
+        "src/content/platforms/gemini.js",
         "src/content/platforms/index.js",
         "src/content/state.js",
         "src/content/observer.js",

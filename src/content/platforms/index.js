@@ -1,9 +1,9 @@
 (() => {
   const root = (globalThis.PretextApp = globalThis.PretextApp || {});
-  const { chatgpt, perplexity, deepseek, gapgpt } = root.platforms;
+  const { chatgpt, perplexity, deepseek, gapgpt, gemini } = root.platforms;
 
   /** Platform adapters in detection order. */
-  root.platformList = [chatgpt, perplexity, deepseek, gapgpt];
+  root.platformList = [chatgpt, perplexity, deepseek, gapgpt, gemini];
   root.autoInsertPaused = false;
 
   root.findPromptTextarea = function findPromptTextarea() {

@@ -13,6 +13,7 @@ const CONTENT_SCRIPT_FILES = [
   'src/content/platforms/perplexity.js',
   'src/content/platforms/deepseek.js',
   'src/content/platforms/gapgpt.js',
+  'src/content/platforms/gemini.js',
   'src/content/platforms/index.js',
   'src/content/state.js',
   'src/content/observer.js',

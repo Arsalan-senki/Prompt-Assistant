@@ -274,8 +274,8 @@ async function enhanceOnce() {
     return;
   }
 
-  if (!/^https:\/\/(chatgpt\.com|www\.perplexity\.ai|chat\.deepseek\.com|gapgpt\.app)\//.test(tab.url || '')) {
-    showStatus('Open a supported chat page first (ChatGPT, Perplexity, DeepSeek, GapGPT)', 'error');
+  if (!/^https:\/\/(chatgpt\.com|www\.perplexity\.ai|chat\.deepseek\.com|gapgpt\.app|gemini\.google\.com)\//.test(tab.url || '')) {
+    showStatus('Open a supported chat page first (ChatGPT, Perplexity, DeepSeek, GapGPT, Gemini)', 'error');
     return;
   }
 
