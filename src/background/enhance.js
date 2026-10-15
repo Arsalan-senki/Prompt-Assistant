@@ -1,7 +1,7 @@
 import {
   DEFAULT_ENHANCE_SETTINGS,
   ENHANCE_STYLES,
-  ENHANCE_MODEL,
+  ENHANCE_MODELS,
   STORAGE_KEYS,
 } from '../shared/constants.js';
 
@@ -163,7 +163,7 @@ function buildSystemPrompt(settings) {
 }
 
 function buildRequestBody(text, settings, stream) {
-  const model = settings.model || ENHANCE_MODEL;
+  const model = settings.model;
   const temperature = Number(settings.temperature);
   const topP = Number(settings.topP);
   const maxTokens = Number(settings.maxTokens);
@@ -205,6 +205,12 @@ async function loadEnhanceConfig(overrides = {}) {
     ...(stored[STORAGE_KEYS.enhanceSettings] || {}),
     ...overrides,
   };
+
+  // Reject old/custom model IDs rather than sending the user's key to an
+  // unlisted or potentially paid endpoint.
+  if (!ENHANCE_MODELS.includes(settings.model)) {
+    throw new Error('Choose one of the supported free models in Enhance settings.');
+  }
 
   return { apiKey, settings };
 }

@@ -40,7 +40,7 @@ After reloading the extension, refresh any open chat tabs.
 
 ### Enhance
 
-1. Add an OpenRouter API key under **Enhance Settings** (see below)
+1. Add an OpenRouter API key and choose a model under **Enhance Settings** (see below)
 2. Type or paste your prompt in the **chat box** (not only in the panel)
 3. Click **Enhance Prompt**
 4. The chat box is rewritten once; the saved panel pretext stays unchanged
@@ -50,6 +50,8 @@ Hover labels in Enhance Settings for short descriptions of each option.
 ### Set the OpenRouter API key
 
 Enhance uses [OpenRouter](https://openrouter.ai/). You need your own API key.
+
+The model dropdown offers three free OpenRouter endpoints: Qwen3 235B Instruct, DeepSeek V3.1, and Gemma 3 27B. One OpenRouter key works for all three. Free endpoints have rate limits and their availability can change.
 
 1. Create an account at [https://openrouter.ai/](https://openrouter.ai/)
 2. Open [https://openrouter.ai/keys](https://openrouter.ai/keys)

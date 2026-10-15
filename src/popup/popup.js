@@ -1,6 +1,11 @@
 const DEFAULT_PRETEXT = 'give me direct answers';
+const ENHANCE_MODELS = [
+  'qwen/qwen3-235b-a22b-2507:free',
+  'deepseek/deepseek-chat-v3.1:free',
+  'google/gemma-3-27b-it:free',
+];
 const DEFAULT_ENHANCE_SETTINGS = {
-  model: 'qwen/qwen3-235b-a22b',
+  model: ENHANCE_MODELS[0],
   style: 'direct',
   customInstruction: '',
   language: 'auto',
@@ -129,9 +134,7 @@ function toggleHelpPanel() {
 
 function readEnhanceSettingsFromForm() {
   return {
-    model:
-      document.getElementById('enhanceModel').value.trim() ||
-      DEFAULT_ENHANCE_SETTINGS.model,
+    model: document.getElementById('enhanceModel').value,
     style: document.getElementById('enhanceStyle').value || 'direct',
     customInstruction: document
       .getElementById('enhanceCustomInstruction')
@@ -162,8 +165,9 @@ function loadEnhanceSettings() {
     const settings = { ...DEFAULT_ENHANCE_SETTINGS, ...(data.enhanceSettings || {}) };
 
     document.getElementById('enhanceApiKey').value = data.enhanceApiKey || '';
-    document.getElementById('enhanceModel').value =
-      settings.model || DEFAULT_ENHANCE_SETTINGS.model;
+    document.getElementById('enhanceModel').value = ENHANCE_MODELS.includes(settings.model)
+      ? settings.model
+      : DEFAULT_ENHANCE_SETTINGS.model;
     document.getElementById('enhanceStyle').value = settings.style || 'direct';
     const legacyExtra = settings.extraContext || '';
     const custom = settings.customInstruction || '';

@@ -16,7 +16,12 @@ export const MESSAGE_TYPES = {
 export const DEFAULT_PRETEXT = 'give me direct answers';
 export const DEFAULT_ENABLED = true;
 
-export const ENHANCE_MODEL = 'qwen/qwen3-235b-a22b';
+export const ENHANCE_MODELS = [
+  'qwen/qwen3-235b-a22b-2507:free',
+  'deepseek/deepseek-chat-v3.1:free',
+  'google/gemma-3-27b-it:free',
+];
+export const ENHANCE_MODEL = ENHANCE_MODELS[0];
 
 export const DEFAULT_ENHANCE_SETTINGS = {
   model: ENHANCE_MODEL,

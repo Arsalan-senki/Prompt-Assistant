@@ -47,11 +47,15 @@
         <button type="button" id="backFromSettings" class="text-button">Back</button>
       </div>
 
-      <label class="field-label" for="enhanceApiKey" title="Your OpenRouter API key. Stored locally in this browser only.">OpenRouter API key</label>
-      <input id="enhanceApiKey" type="password" autocomplete="off" placeholder="sk-or-..." title="Your OpenRouter API key. Stored locally in this browser only." />
+      <label class="field-label" for="enhanceApiKey" title="One OpenRouter API key works with all three listed models. Stored locally in this browser only.">OpenRouter API key</label>
+      <input id="enhanceApiKey" type="password" autocomplete="off" placeholder="sk-or-..." title="One OpenRouter API key works with all three listed models. Stored locally in this browser only." />
 
-      <label class="field-label" for="enhanceModel" title="OpenRouter model id used for rewriting, e.g. qwen/qwen3-235b-a22b.">Model</label>
-      <input id="enhanceModel" type="text" value="qwen/qwen3-235b-a22b" title="OpenRouter model id used for rewriting, e.g. qwen/qwen3-235b-a22b." />
+      <label class="field-label" for="enhanceModel">Model (free endpoints)</label>
+      <select id="enhanceModel">
+        <option value="qwen/qwen3-235b-a22b-2507:free">Qwen3 235B Instruct (recommended)</option>
+        <option value="deepseek/deepseek-chat-v3.1:free">DeepSeek V3.1</option>
+        <option value="google/gemma-3-27b-it:free">Gemma 3 27B</option>
+      </select>
 
       <label class="field-label" for="enhanceStyle" title="Preset rewrite style. Choose Custom to rely on your custom instruction.">Enhancement style</label>
       <select id="enhanceStyle" title="Preset rewrite style. Choose Custom to rely on your custom instruction.">
