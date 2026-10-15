@@ -9,7 +9,7 @@ Works on **ChatGPT**, **Perplexity**, **DeepSeek**, **GapGPT**, and **Gemini**. 
 - **Saved pretext** - auto-inserts into empty chat composers
 - **Enhance Prompt** - rewrites the text in the chat box once (does not change the saved pretext)
 - **Streaming enhance** - writes the improved prompt into the chat as tokens arrive
-- **Enhance settings** - model, style, language, tone, domain, creativity, and more
+- **Enhance settings** - model, rewrite style, language, and optional instructions
 - **Multi-site adapters** - one platform file per chatbot site
 - No build step - load unpacked from the repo root
 

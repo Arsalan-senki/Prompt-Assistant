@@ -169,7 +169,8 @@ body {
 #enhanceCustomInstruction,
 #enhanceApiKey,
 #enhanceModel,
-#enhanceStyle {
+#enhanceStyle,
+#enhanceLanguage {
     width: 100%;
     padding: 10px;
     margin-bottom: 4px;
@@ -194,36 +195,6 @@ body {
     resize: vertical;
 }
 
-.settings-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px 10px;
-    margin-top: 4px;
-}
-
-.settings-grid select {
-    width: 100%;
-    padding: 10px;
-    background-color: var(--input-bg);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 13px;
-}
-
-#enhanceMaxTokens {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 8px;
-    background-color: var(--input-bg);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 13px;
-}
-
 .checkbox-row {
     display: flex;
     align-items: flex-start;
@@ -245,7 +216,8 @@ body {
 #enhanceCustomInstruction:focus,
 #enhanceApiKey:focus,
 #enhanceModel:focus,
-#enhanceStyle:focus {
+#enhanceStyle:focus,
+#enhanceLanguage:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.15);

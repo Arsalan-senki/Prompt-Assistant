@@ -12,21 +12,12 @@ function buildSystemPrompt(settings) {
   const style = settings.style || 'direct';
   const custom = settings.customInstruction?.trim() || '';
 
-  if (style === 'custom') {
-    parts.push(
-      custom ||
-        'Rewrite the prompt so it is clearer, more direct, and gets better answers.'
-    );
-  } else {
-    parts.push(ENHANCE_STYLES[style] || ENHANCE_STYLES.direct);
-    if (custom) {
-      parts.push(`Custom instruction from the user: ${custom}`);
-    }
+  parts.push(ENHANCE_STYLES[style] || ENHANCE_STYLES.direct);
+  if (custom) {
+    parts.push(`Custom instruction from the user: ${custom}`);
   }
 
-  if (settings.keepIntent !== false) {
-    parts.push('Preserve the original intent and meaning.');
-  }
+  parts.push('Preserve the original intent and meaning.');
 
   switch (settings.language) {
     case 'en':
@@ -40,120 +31,8 @@ function buildSystemPrompt(settings) {
       break;
   }
 
-  switch (settings.tone) {
-    case 'formal':
-      parts.push('Use a formal tone.');
-      break;
-    case 'casual':
-      parts.push('Use a casual, conversational tone.');
-      break;
-    case 'technical':
-      parts.push('Use a precise technical tone.');
-      break;
-    case 'persuasive':
-      parts.push('Use a persuasive tone.');
-      break;
-    default:
-      break;
-  }
-
-  switch (settings.audience) {
-    case 'beginner':
-      parts.push('Target a beginner audience.');
-      break;
-    case 'expert':
-      parts.push('Target an expert audience; avoid over-explaining basics.');
-      break;
-    case 'developer':
-      parts.push('Target software developers.');
-      break;
-    default:
-      break;
-  }
-
-  switch (settings.domain) {
-    case 'coding':
-      parts.push('Optimize the prompt for coding / software tasks.');
-      break;
-    case 'writing':
-      parts.push('Optimize the prompt for writing / editing tasks.');
-      break;
-    case 'research':
-      parts.push('Optimize the prompt for research / analysis tasks.');
-      break;
-    case 'business':
-      parts.push('Optimize the prompt for business / product tasks.');
-      break;
-    default:
-      break;
-  }
-
-  switch (settings.role) {
-    case 'expert':
-      parts.push('Frame the prompt as asking an expert assistant.');
-      break;
-    case 'teacher':
-      parts.push('Frame the prompt as asking a patient teacher.');
-      break;
-    case 'coder':
-      parts.push('Frame the prompt as asking a senior software engineer.');
-      break;
-    case 'researcher':
-      parts.push('Frame the prompt as asking a careful researcher.');
-      break;
-    default:
-      break;
-  }
-
-  switch (settings.length) {
-    case 'shorter':
-      parts.push('Make the result noticeably shorter than the original.');
-      break;
-    case 'longer':
-      parts.push('Make the result more complete and slightly longer if helpful.');
-      break;
-    default:
-      parts.push('Keep roughly similar length unless clarity requires a change.');
-      break;
-  }
-
-  switch (settings.outputFormat) {
-    case 'bullets':
-      parts.push('Format the improved prompt as concise bullet points.');
-      break;
-    case 'numbered':
-      parts.push('Format the improved prompt as a short numbered list.');
-      break;
-    case 'sections':
-      parts.push(
-        'Format the improved prompt with short labeled sections (Goal, Context, Constraints, Output).'
-      );
-      break;
-    default:
-      parts.push('Keep the improved prompt as plain continuous text unless structure helps.');
-      break;
-  }
-
-  if (settings.addStructure) {
-    parts.push(
-      'When helpful, include clear goals, constraints, and desired output format.'
-    );
-  }
-  if (settings.includeConstraints) {
-    parts.push('Make important constraints explicit.');
-  }
-  if (settings.askExamples) {
-    parts.push('Ask for concrete examples in the improved prompt when useful.');
-  }
-  if (settings.stepByStep) {
-    parts.push('Ask for a step-by-step approach in the improved prompt when useful.');
-  }
-  if (settings.noFluff) {
-    parts.push('Remove filler, fluff, and vague wording.');
-  }
-  if (settings.stripMarkdown) {
-    parts.push('Do not wrap the whole answer in markdown code fences.');
-  }
+  parts.push('Make important constraints explicit and remove filler.');
+  parts.push('Do not wrap the answer in markdown code fences.');
 
   parts.push(
     'Output only the improved prompt text - no quotes, labels, or explanation.'
@@ -164,10 +43,6 @@ function buildSystemPrompt(settings) {
 
 function buildRequestBody(text, settings, stream) {
   const model = settings.model;
-  const temperature = Number(settings.temperature);
-  const topP = Number(settings.topP);
-  const maxTokens = Number(settings.maxTokens);
-
   const body = {
     model,
     stream,
@@ -178,13 +53,9 @@ function buildRequestBody(text, settings, stream) {
         content: `Improve this prompt:\n\n${text}`,
       },
     ],
-    temperature: Number.isFinite(temperature) ? temperature : 0.3,
-    max_tokens: Number.isFinite(maxTokens) && maxTokens > 0 ? maxTokens : 1024,
+    temperature: 0.3,
+    max_tokens: 1024,
   };
-
-  if (Number.isFinite(topP) && topP > 0 && topP <= 1) {
-    body.top_p = topP;
-  }
 
   return body;
 }
@@ -200,10 +71,18 @@ async function loadEnhanceConfig(overrides = {}) {
     throw new Error('Add your OpenRouter API key in Enhance settings.');
   }
 
+  const saved = stored[STORAGE_KEYS.enhanceSettings] || {};
   const settings = {
     ...DEFAULT_ENHANCE_SETTINGS,
-    ...(stored[STORAGE_KEYS.enhanceSettings] || {}),
-    ...overrides,
+    model: ENHANCE_MODELS.includes(saved.model)
+      ? saved.model
+      : DEFAULT_ENHANCE_SETTINGS.model,
+    style: saved.style || DEFAULT_ENHANCE_SETTINGS.style,
+    customInstruction: saved.customInstruction || saved.extraContext || '',
+    language: saved.language || DEFAULT_ENHANCE_SETTINGS.language,
+    ...Object.fromEntries(
+      Object.entries(overrides).filter(([key]) => key in DEFAULT_ENHANCE_SETTINGS)
+    ),
   };
 
   // Reject old/custom model IDs rather than sending the user's key to an
@@ -256,9 +135,7 @@ export async function enhancePromptText(text, overrides = {}) {
     throw new Error('Model returned an empty response.');
   }
 
-  if (settings.stripMarkdown) {
-    enhanced = stripMarkdownFences(enhanced);
-  }
+  enhanced = stripMarkdownFences(enhanced);
 
   return enhanced;
 }
@@ -337,9 +214,7 @@ export async function enhancePromptTextStream(text, onChunk, overrides = {}) {
     throw new Error('Model returned an empty response.');
   }
 
-  if (settings.stripMarkdown) {
-    enhanced = stripMarkdownFences(enhanced);
-  }
+  enhanced = stripMarkdownFences(enhanced);
 
   // Do not call onChunk again here - final text is applied once by the caller
   return enhanced;

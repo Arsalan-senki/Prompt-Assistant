@@ -9,23 +9,6 @@ const DEFAULT_ENHANCE_SETTINGS = {
   style: 'direct',
   customInstruction: '',
   language: 'auto',
-  tone: 'neutral',
-  audience: 'general',
-  length: 'same',
-  domain: 'general',
-  role: 'none',
-  outputFormat: 'plain',
-  source: 'composer',
-  temperature: 0.3,
-  topP: 1,
-  maxTokens: 1024,
-  addStructure: true,
-  keepIntent: true,
-  askExamples: false,
-  stepByStep: false,
-  noFluff: true,
-  includeConstraints: true,
-  stripMarkdown: true,
 };
 
 const MESSAGE_TYPES = {
@@ -140,23 +123,6 @@ function readEnhanceSettingsFromForm() {
       .getElementById('enhanceCustomInstruction')
       .value.trim(),
     language: document.getElementById('enhanceLanguage').value || 'auto',
-    tone: document.getElementById('enhanceTone').value || 'neutral',
-    audience: document.getElementById('enhanceAudience').value || 'general',
-    domain: document.getElementById('enhanceDomain').value || 'general',
-    role: document.getElementById('enhanceRole').value || 'none',
-    outputFormat: document.getElementById('enhanceOutputFormat').value || 'plain',
-    length: document.getElementById('enhanceLength').value || 'same',
-    source: document.getElementById('enhanceSource').value || 'composer',
-    temperature: Number(document.getElementById('enhanceTemperature').value) || 0.3,
-    topP: Number(document.getElementById('enhanceTopP').value) || 1,
-    maxTokens: Number(document.getElementById('enhanceMaxTokens').value) || 1024,
-    addStructure: document.getElementById('enhanceAddStructure').checked,
-    includeConstraints: document.getElementById('enhanceIncludeConstraints').checked,
-    keepIntent: document.getElementById('enhanceKeepIntent').checked,
-    noFluff: document.getElementById('enhanceNoFluff').checked,
-    askExamples: document.getElementById('enhanceAskExamples').checked,
-    stepByStep: document.getElementById('enhanceStepByStep').checked,
-    stripMarkdown: document.getElementById('enhanceStripMarkdown').checked,
   };
 }
 
@@ -168,38 +134,16 @@ function loadEnhanceSettings() {
     document.getElementById('enhanceModel').value = ENHANCE_MODELS.includes(settings.model)
       ? settings.model
       : DEFAULT_ENHANCE_SETTINGS.model;
-    document.getElementById('enhanceStyle').value = settings.style || 'direct';
+    document.getElementById('enhanceStyle').value =
+      ['direct', 'shorter', 'detailed'].includes(settings.style)
+        ? settings.style
+        : 'direct';
     const legacyExtra = settings.extraContext || '';
     const custom = settings.customInstruction || '';
     document.getElementById('enhanceCustomInstruction').value = [custom, legacyExtra]
       .filter(Boolean)
       .join('\n\n');
     document.getElementById('enhanceLanguage').value = settings.language || 'auto';
-    document.getElementById('enhanceTone').value = settings.tone || 'neutral';
-    document.getElementById('enhanceAudience').value = settings.audience || 'general';
-    document.getElementById('enhanceDomain').value = settings.domain || 'general';
-    document.getElementById('enhanceRole').value = settings.role || 'none';
-    document.getElementById('enhanceOutputFormat').value =
-      settings.outputFormat || 'plain';
-    document.getElementById('enhanceLength').value = settings.length || 'same';
-    document.getElementById('enhanceSource').value =
-      settings.source === 'panel' ? 'panel' : 'composer';
-    document.getElementById('enhanceTemperature').value = String(
-      settings.temperature ?? 0.3
-    );
-    document.getElementById('enhanceTopP').value = String(settings.topP ?? 1);
-    document.getElementById('enhanceMaxTokens').value = settings.maxTokens || 1024;
-    document.getElementById('enhanceAddStructure').checked =
-      settings.addStructure !== false;
-    document.getElementById('enhanceIncludeConstraints').checked =
-      settings.includeConstraints !== false;
-    document.getElementById('enhanceKeepIntent').checked =
-      settings.keepIntent !== false;
-    document.getElementById('enhanceNoFluff').checked = settings.noFluff !== false;
-    document.getElementById('enhanceAskExamples').checked = Boolean(settings.askExamples);
-    document.getElementById('enhanceStepByStep').checked = Boolean(settings.stepByStep);
-    document.getElementById('enhanceStripMarkdown').checked =
-      settings.stripMarkdown !== false;
   });
 }
 
@@ -225,24 +169,7 @@ function sendTabMessage(tabId, payload) {
   return chrome.tabs.sendMessage(tabId, payload).catch(() => null);
 }
 
-async function getEnhanceSourceMode() {
-  const data = await chrome.storage.local.get(['enhanceSettings']);
-  const settings = { ...DEFAULT_ENHANCE_SETTINGS, ...(data.enhanceSettings || {}) };
-  // Legacy "auto" behaved like panel fallback - treat it as chat-only now
-  return settings.source === 'panel' ? 'panel' : 'composer';
-}
-
-/**
- * Enhance always targets the chat composer by default.
- * Panel pretext is only used if Text source is explicitly set to "panel".
- */
 async function resolveTextToEnhance() {
-  const source = await getEnhanceSourceMode();
-
-  if (source === 'panel') {
-    return document.getElementById('repeatableTextInput').value.trim();
-  }
-
   const tab = await getActiveTab();
   if (!tab?.id) return '';
 

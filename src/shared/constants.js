@@ -28,23 +28,6 @@ export const DEFAULT_ENHANCE_SETTINGS = {
   style: 'direct',
   customInstruction: '',
   language: 'auto',
-  tone: 'neutral',
-  audience: 'general',
-  length: 'same',
-  domain: 'general',
-  role: 'none',
-  outputFormat: 'plain',
-  source: 'composer',
-  temperature: 0.3,
-  topP: 1,
-  maxTokens: 1024,
-  addStructure: true,
-  keepIntent: true,
-  askExamples: false,
-  stepByStep: false,
-  noFluff: true,
-  includeConstraints: true,
-  stripMarkdown: true,
 };
 
 export const ENHANCE_STYLES = {
@@ -52,9 +35,6 @@ export const ENHANCE_STYLES = {
     'Rewrite the prompt so it is clearer, more direct, and gets better answers.',
   shorter:
     'Rewrite the prompt to be shorter and denser while keeping the same intent.',
-  clearer:
-    'Rewrite the prompt for clarity: fix ambiguity and add missing constraints if obvious.',
   detailed:
     'Rewrite the prompt to be more specific and well-structured (goal, constraints, format).',
-  custom: '',
 };
